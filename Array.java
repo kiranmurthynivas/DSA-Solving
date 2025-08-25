@@ -1,9 +1,10 @@
 
+import java.util.Arrays;
 import java.util.Stack;
+import java.util.stream.IntStream;
 
 
-
-public class Arrays {
+public class Array {
 
     public static int BinarySearch(int arr[], int key) {
         int start = 0;
@@ -251,9 +252,146 @@ public class Arrays {
         return ans;
     } 
 
-    
-    public static void main(String[] args) {
-       int height[] = {2,1,5,6,2,3};
-       System.out.println(largerRectangle(height));
-    }
+    public static int peakIndex(int arr[]) {
+        int st =1 , end = arr.length-2;
+
+        while(st <= end ) {
+            int mid = st + (end - st) / 2;
+            
+            if(arr[mid-1] < arr[mid] && arr[mid] > arr[mid+1]) {
+                return mid;
+            } else if( arr[mid-1] < arr[mid]) {
+                st= mid+1;
+            } else {
+                end = mid -1;
+            }
+        }
+        return -1;
+    } 
+
+    public static int singleElement(int nums[]) {
+        int n = nums.length;
+        int st =0 , end = n-1;
+        
+        if(n == 1) {
+                return nums[0];
+            }
+        while( st <= end) {
+            int mid = st + ( end - st) /2;
+            
+            if(mid == 0 && nums[0] != nums[1]) {
+                return nums[0];
+            }
+            if(mid == n-1 && nums[n-1] != nums[n-1] ) {
+                return nums[n-1];
+            }
+
+            if( nums[mid-1] != nums[mid] && nums[mid+1] != nums[mid]) {
+                return nums[mid];
+            } 
+            
+            if( mid % 2 == 0 ) {
+                if(nums[mid-1] == nums[mid]) {
+                    end = mid -1;
+                } else {
+                    st = mid +1;
+                }
+            } else {
+                if(nums[mid-1] == nums[mid]) {
+                    st = mid +1;
+                } else {
+                    end = mid -1;
+                }
+            }
+        }
+        return -1;
 }
+
+    public static int allocatePages(int arr[], int k) {
+        int st =0 , end = IntStream.of(arr).sum(), n = arr.length;
+        int ans = -1;
+
+        if(k > n) return -1;
+        while( st <= end) {
+            int mid = st + (end - st)/2;
+            if(isValid(arr,n,k,mid)) {
+                ans = mid;
+                end = mid -1;
+            } else {
+                st = mid +1;
+            }
+        }
+        return ans;
+}
+
+    public static boolean isValid(int arr[], int n, int k, int mid) {
+          int c = 1 , blocks =0;
+          
+          for(int i=0; i<n; i++) {
+             if(arr[i] > mid) return false;
+
+             if(blocks+ arr[i] <= mid) {
+                blocks += arr[i];
+             } else {
+                c++;
+                blocks = arr[i];
+             }
+          }
+          return c <=k;
+    }
+
+    public static void paintersPartion(int arr[] , int c) {
+            int st =0 , ans = -1 , end =IntStream.of(arr).sum(),  n = arr.length; //  Painters prtation
+
+            if( c > n) return;
+
+            while( st <= end ) {
+                int mid = st +(end -st ) /2;
+                if(isValid(arr,n,c,mid)) {
+                    ans = mid;
+                    end = mid -1;
+                } else {
+                    st = mid +1;
+                }
+            } 
+            
+        System.out.println(ans);
+    } 
+
+     public static boolean isPossible(int[] arr, int n, int c, int minAllowedDist) {
+        int cows = 1;
+        int lastStallPos = arr[0];
+
+        for (int i = 1; i < n; i++) {
+            if (arr[i] - lastStallPos >= minAllowedDist) {
+                cows++;
+                lastStallPos = arr[i];
+            }
+            if (cows == c) return true;
+        }
+        return false;
+    }
+
+    public static int getDistance(int[] arr, int n, int c) {    // Aggresive cows
+        Arrays.sort(arr);
+        int st = 1, end = arr[n - 1] - arr[0], ans = -1;
+
+        while (st <= end) {
+            int mid = st + (end - st) / 2;
+            if (isPossible(arr, n, c, mid)) {
+                ans = mid;
+                st = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 8, 4, 9};
+        int n = arr.length, c = 3;
+        System.out.println(getDistance(arr, n, c));
+    }
+} 
